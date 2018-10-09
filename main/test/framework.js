@@ -64,15 +64,6 @@ module.exports = function (accounts, done, schema) {
                         return error("Current block is " + block + ", but action " + index +
                             " takes place in prior block " + action.block);
                     }
-                    // If the next action is a callback, execute it.
-                    if (typeof(action.action) == "function") {
-                        var result = action.action();
-                        if (result) {
-                            return fail(index, result);
-                        }
-                        // On successful evaluation of the callback, reinvoke ourselves.
-                        return run_(block, nextIndex);
-                    }
 
                     //console.log("Running action: " + action.action);
                     // Run the action and get a promise.
@@ -95,6 +86,8 @@ module.exports = function (accounts, done, schema) {
                         if (action.post) {
                             action.post(action, result, action.result);
                         }
+
+
 
                         if (action.result != null) {
                             if (action.result != result) {
@@ -162,8 +155,16 @@ function performAction(action, instance, accounts, gasPrice, gasAllocated) {
             return instance.transferFrom(
                 accounts[action.from],
                 accounts[action.to],
-                accounts[action.amount],
                 action.amount,
+                {
+                    from: account,
+                    gasPrice: gasPrice,
+                    gas: gasAllocated
+                });
+            break;
+        case "transferOwner":
+            return instance.transferOwner(
+                accounts[action.to],
                 {
                     from: account,
                     gasPrice: gasPrice,
@@ -186,6 +187,14 @@ function performAction(action, instance, accounts, gasPrice, gasAllocated) {
                 accounts[action.spender],
                 accounts[action.amount],
                 action.amount,
+                {
+                    from: account,
+                    gasPrice: gasPrice,
+                    gas: gasAllocated
+                });
+            break;
+        case "owner":
+            return instance.owner(
                 {
                     from: account,
                     gasPrice: gasPrice,

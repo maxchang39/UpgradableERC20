@@ -3,7 +3,7 @@ var run = require('../framework.js');
 var counter = require('../blockCounter.js');
 
 contract('Upgradable ERC20 - approve accounts to transfer balance on be half of the owner', function (accounts) {
-    it("Approve accounts to transfer balance on be half of the owner Test Passed", function (done) {
+    it("Approve accounts to transfer balance on be half of the owner Test", function (done) {
         var printAllowance = function (action, result, expected) {
             var line = "    The allowance of account " + action.spender + " on behalf of account " + action.owner +" is " + result.toString();
             if (expected != null)

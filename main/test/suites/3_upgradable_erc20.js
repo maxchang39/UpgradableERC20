@@ -3,10 +3,10 @@ var run = require('../framework.js');
 var counter = require('../blockCounter.js');
 
 contract('Upgradable ERC20 - transfer balance', function (accounts) {
-    it("Transfer balance Test Passed", function (done) {
+    it("Transfer balance Test", function (done) {
         var logTransfer = function (action) {
             console.log("    [Log]Attempt to transfer " + action.amount + " from account " +
-                action.account + " to account " + action.to);
+                action.account + " to account " + action.to + ", Expected " + action.succeed);
         }
 
         var printAccount = function (action, result, expected) {

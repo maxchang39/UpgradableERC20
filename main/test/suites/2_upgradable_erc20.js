@@ -3,7 +3,7 @@ var run = require('../framework.js');
 var counter = require('../blockCounter.js');
 
 contract('Upgradable ERC20 - read balance and totalSupply', function (accounts) {
-    it("Read balance and totalSupply Test Passed", function (done) {
+    it("Read balance and totalSupply Test", function (done) {
         var printAccount = function (action, result, expected) {
             var line = "    The balance of account " + action.owner + " is " + result.toString();
             if(expected != null)

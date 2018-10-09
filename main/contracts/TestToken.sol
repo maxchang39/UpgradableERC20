@@ -2,7 +2,6 @@ pragma solidity ^0.4.24;
 import "./UpgradableERC20.sol";
 import "./lib/math/SafeMath.sol";
 
-
 contract TestToken is UpgradableERC20 {
     using SafeMath for uint256;
 
@@ -56,6 +55,14 @@ contract TestToken is UpgradableERC20 {
 
         balances[_from] = balances[_from].sub(_amount);
         balances[_to] = balances[_to].add(_amount);
+
+        return true;
+    }
+
+    // Transfer ownership to a new account
+    function transferOwner(address _to) public returns (bool success){
+        require(msg.sender == owner);
+        owner = _to;
 
         return true;
     }
