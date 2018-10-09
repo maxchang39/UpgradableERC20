@@ -1,9 +1,9 @@
 var BigNumber = require('bignumber.js');
 var run = require('../framework.js');
 
-contract('Upgradable ERC20', function (accounts) {
+contract('Upgradable ERC20 - Contract Construction', function (accounts) {
 
-    it("creates a upgradable erc20 contract", function (done) {
+    it("Contract Construction Test Passed", function (done) {
         run(accounts, done, {
             type: "erc",
             actions: [],

@@ -7,7 +7,7 @@ pragma solidity ^0.4.24;
 library SafeMath {
 
     /**
-    * @dev Multiplies two numbers, reverts on overflow.
+    * @dev Multiplies two numbers, rev  erts on overflow.
     */
     function mul(uint256 a, uint256 b) internal pure returns (uint256) {
         // Gas optimization: this is cheaper than requiring 'a' not being zero, but the

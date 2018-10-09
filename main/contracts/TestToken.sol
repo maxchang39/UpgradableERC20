@@ -49,18 +49,15 @@ contract TestToken is UpgradableERC20 {
         address _to,
         uint256 _amount
     ) public returns (bool success) {
-        if (balances[_from] >= _amount
-        && allowed[_from][msg.sender] >= _amount
-        && _amount > 0
-        && balances[_to] + _amount > balances[_to]) {
-            balances[_from] -= _amount;
-            allowed[_from][msg.sender] -= _amount;
-            balances[_to] += _amount;
-            emit Transfer(_from, _to, _amount);
-            return true;
-        } else {
-            return false;
-        }
+        require(balances[_from] >= _amount);
+        require(allowed[_from][msg.sender] >= _amount);
+
+        allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_amount);
+
+        balances[_from] = balances[_from].sub(_amount);
+        balances[_to] = balances[_to].add(_amount);
+
+        return true;
     }
 
     // Allow _spender to transfer _amount on behalf msg.sender

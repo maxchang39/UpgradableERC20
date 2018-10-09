@@ -83,6 +83,9 @@ module.exports = function (accounts, done, schema) {
                     if (!promise)
                         return error("Unknown action " + action.action);
 
+                    if(action.log != null)
+                        action.log(action);
+
                     // Continue the computation after the promise.
                     promise.then(function (result) {
                         if (!action.succeed) {
@@ -90,7 +93,13 @@ module.exports = function (accounts, done, schema) {
                         }
 
                         if (action.post) {
-                            action.post(action, result);
+                            action.post(action, result, action.result);
+                        }
+
+                        if (action.result != null) {
+                            if (action.result != result) {
+                                return error("Wrong return on " + action.action + ". Expected " + action.result + ", Get " + result);
+                            }
                         }
 
                         run_(nextBlock, nextIndex);
@@ -142,6 +151,40 @@ function performAction(action, instance, accounts, gasPrice, gasAllocated) {
         case "transfer":
             return instance.transfer(
                 accounts[action.to],
+                action.amount,
+                {
+                    from: account,
+                    gasPrice: gasPrice,
+                    gas: gasAllocated
+                });
+            break;
+        case "transferFrom":
+            return instance.transferFrom(
+                accounts[action.from],
+                accounts[action.to],
+                accounts[action.amount],
+                action.amount,
+                {
+                    from: account,
+                    gasPrice: gasPrice,
+                    gas: gasAllocated
+                });
+            break;
+        case "allowance":
+            return instance.allowance(
+                accounts[action.owner],
+                accounts[action.spender],
+                action.amount,
+                {
+                    from: account,
+                    gasPrice: gasPrice,
+                    gas: gasAllocated
+                });
+            break;
+        case "approve":
+            return instance.approve(
+                accounts[action.spender],
+                accounts[action.amount],
                 action.amount,
                 {
                     from: account,
