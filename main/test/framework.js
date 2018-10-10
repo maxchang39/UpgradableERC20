@@ -201,6 +201,22 @@ function performAction(action, instance, accounts, gasPrice, gasAllocated) {
                     gas: gasAllocated
                 });
             break;
+        case "freeze":
+            return instance.freeze(
+                {
+                    from: account,
+                    gasPrice: gasPrice,
+                    gas: gasAllocated
+                });
+            break;
+        case "unfreeze":
+            return instance.unfreeze(
+                {
+                    from: account,
+                    gasPrice: gasPrice,
+                    gas: gasAllocated
+                });
+            break;
         default:
             return null;
     }

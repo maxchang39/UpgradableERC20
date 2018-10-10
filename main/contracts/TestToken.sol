@@ -7,6 +7,8 @@ contract TestToken is UpgradableERC20 {
 
     uint256 _totalSupply = 10000;
 
+    bool _freeze = false;
+
     // Owner of this contract
     address public owner;
 
@@ -34,7 +36,9 @@ contract TestToken is UpgradableERC20 {
 
     // transfer _amount from msg.sender to _to
     function transfer(address _to, uint256 _amount) public returns (bool success) {
+        require(!_freeze);
         require(balances[msg.sender] >= _amount);
+        require(_to!=0);
 
         balances[msg.sender] = balances[msg.sender].sub(_amount);
         balances[_to] = balances[_to].add(_amount);
@@ -48,8 +52,10 @@ contract TestToken is UpgradableERC20 {
         address _to,
         uint256 _amount
     ) public returns (bool success) {
+        require(!_freeze);
         require(balances[_from] >= _amount);
         require(allowed[_from][msg.sender] >= _amount);
+        require(_to!=0);
 
         allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_amount);
 
@@ -77,5 +83,23 @@ contract TestToken is UpgradableERC20 {
     // Get the amount allowed to transfer through _spender on behalf of _owner
     function allowance(address _owner, address _spender) public view returns (uint256 remaining) {
         return allowed[_owner][_spender];
+    }
+
+    // Freeze and block new transfers
+    function freeze() public returns (bool success) {
+        require(msg.sender == owner);
+
+        _freeze = true;
+
+        return true;
+    }
+
+    // Unfreeze and allow new transfers
+    function unfreeze() public returns (bool success) {
+        require(msg.sender == owner);
+
+        _freeze = false;
+
+        return true;
     }
 }

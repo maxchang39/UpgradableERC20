@@ -18,8 +18,9 @@ Proxy
 * The token contract has an owner that is initially set to the address that created the contract.
 * The owner can transfer ownership of the contract to a different address.
 * The owner can temporarily pause all token transfers.
-* The owner can blacklist a specific address thus preventing it from * sending, receiving, or allowing any token transfers.
-The owner can upgrade the contract to a new implementation without losing any token data (e.g. balances, allowances, etc).
+* The owner can blacklist a specific address thus preventing it from 
+* sending, receiving, or allowing any token transfers.
+* The owner can upgrade the contract to a new implementation without losing any token data (e.g. balances, allowances, etc).
 
 # Environment
 * Solidity 0.4.24
