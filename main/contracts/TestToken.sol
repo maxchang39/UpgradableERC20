@@ -12,6 +12,8 @@ contract TestToken is UpgradableERC20 {
     // Owner of this contract
     address public owner;
 
+    mapping(address => bool) _blacklist;
+
     // Balances of accounts
     mapping(address => uint256) balances;
 
@@ -36,9 +38,10 @@ contract TestToken is UpgradableERC20 {
 
     // transfer _amount from msg.sender to _to
     function transfer(address _to, uint256 _amount) public returns (bool success) {
+        require(_to != 0);
         require(!_freeze);
+        require(!_blacklist[_to] && !_blacklist[msg.sender]);
         require(balances[msg.sender] >= _amount);
-        require(_to!=0);
 
         balances[msg.sender] = balances[msg.sender].sub(_amount);
         balances[_to] = balances[_to].add(_amount);
@@ -52,10 +55,12 @@ contract TestToken is UpgradableERC20 {
         address _to,
         uint256 _amount
     ) public returns (bool success) {
+        require(_to != 0);
         require(!_freeze);
+        require(!_blacklist[_from] && !_blacklist[_to] && !_blacklist[msg.sender]);
         require(balances[_from] >= _amount);
         require(allowed[_from][msg.sender] >= _amount);
-        require(_to!=0);
+
 
         allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_amount);
 
@@ -68,6 +73,8 @@ contract TestToken is UpgradableERC20 {
     // Transfer ownership to a new account
     function transferOwner(address _to) public returns (bool success){
         require(msg.sender == owner);
+        require(!_blacklist[_to]);
+
         owner = _to;
 
         return true;
@@ -75,8 +82,12 @@ contract TestToken is UpgradableERC20 {
 
     // Allow _spender to transfer _amount on behalf msg.sender
     function approve(address _spender, uint256 _amount) public returns (bool success) {
+        require(!_blacklist[_spender] && !_blacklist[msg.sender]);
+
         allowed[msg.sender][_spender] = _amount;
+
         emit Approval(msg.sender, _spender, _amount);
+
         return true;
     }
 
@@ -99,6 +110,15 @@ contract TestToken is UpgradableERC20 {
         require(msg.sender == owner);
 
         _freeze = false;
+
+        return true;
+    }
+
+    // Black list _user from sending, receiving or allowing any token transfers
+    function blacklist(address _user) public returns (bool success) {
+        require(msg.sender == owner);
+
+        _blacklist[_user] = true;
 
         return true;
     }

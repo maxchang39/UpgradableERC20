@@ -18,13 +18,14 @@ Proxy
 * The token contract has an owner that is initially set to the address that created the contract.
 * The owner can transfer ownership of the contract to a different address.
 * The owner can temporarily pause all token transfers.
-* The owner can blacklist a specific address thus preventing it from 
-* sending, receiving, or allowing any token transfers.
+* The owner can blacklist a specific address thus preventing it from sending, receiving, or allowing any token transfers.
 * The owner can upgrade the contract to a new implementation without losing any token data (e.g. balances, allowances, etc).
 
 # Environment
 * Solidity 0.4.24
-* 
+* Python 2.7
+* Ganache CLI v6.1.8 (ganache-core: 2.2.1)
+* Truffle v4.1.14
 
 # Testing
 First cmd prompt
@@ -37,5 +38,7 @@ Second cmd prompt
 * vagrant ssh
 * cd homework1/main/
 * truffle test
+
+# Test Coverage
 
 # Deployment

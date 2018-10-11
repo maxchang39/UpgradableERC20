@@ -217,6 +217,15 @@ function performAction(action, instance, accounts, gasPrice, gasAllocated) {
                     gas: gasAllocated
                 });
             break;
+        case "blacklist":
+            return instance.blacklist(
+                accounts[action.user],
+                {
+                    from: account,
+                    gasPrice: gasPrice,
+                    gas: gasAllocated
+                });
+            break;
         default:
             return null;
     }
