@@ -1,29 +1,25 @@
 pragma solidity ^0.4.24;
+
+import "./Storage.sol";
 import "./UpgradableERC20.sol";
+import "./TestTokenProxy.sol";
 import "./lib/math/SafeMath.sol";
 
-contract TestToken is UpgradableERC20 {
+contract TestToken is UpgradableERC20, Storage {
     using SafeMath for uint256;
-
-    uint256 _totalSupply = 10000;
-
-    bool _freeze = false;
-
-    // Owner of this contract
-    address public owner;
-
-    mapping(address => bool) _blacklist;
-
-    // Balances of accounts
-    mapping(address => uint256) balances;
-
-    // Amount allowed to transfer on behalf the owner
-    mapping(address => mapping (address => uint256)) allowed;
 
     // Constructor
     constructor() public {
-        owner = msg.sender;
+    }
+
+    function initialize() public returns (bool success){
+        owner = tx.origin;
+        _totalSupply = 10000;
         balances[owner] = _totalSupply;
+//        _storage.setUint("totalSupply", 10000);
+//        balances[msg.sender] = _storage.getUint("totalSupply");
+
+        return true;
     }
 
     // Get the total token supply
@@ -38,7 +34,7 @@ contract TestToken is UpgradableERC20 {
 
     // transfer _amount from msg.sender to _to
     function transfer(address _to, uint256 _amount) public returns (bool success) {
-        require(_to != 0);
+        require(_to != address(0));
         require(!_freeze);
         require(!_blacklist[_to] && !_blacklist[msg.sender]);
         require(balances[msg.sender] >= _amount);
@@ -55,7 +51,7 @@ contract TestToken is UpgradableERC20 {
         address _to,
         uint256 _amount
     ) public returns (bool success) {
-        require(_to != 0);
+        require(_to != address(0));
         require(!_freeze);
         require(!_blacklist[_from] && !_blacklist[_to] && !_blacklist[msg.sender]);
         require(balances[_from] >= _amount);

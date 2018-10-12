@@ -4,6 +4,10 @@ var counter = require('../blockCounter.js');
 
 contract('Upgradable ERC20 - transfer balance', function (accounts) {
     it("Transfer balance Test", function (done) {
+        var logInitialize = function () {
+            console.log("    [Log]Attempt to initialize proxy");
+        }
+
         var logTransfer = function (action) {
             console.log("    [Log]Attempt to transfer " + action.amount + " from account " +
                 action.account + " to account " + action.to + ", Expected " + action.succeed);
@@ -21,6 +25,14 @@ contract('Upgradable ERC20 - transfer balance', function (accounts) {
         run(accounts, done, {
             type: "erc",
             actions: [
+                {
+                    block: counter.increment(),
+                    action: "initialize",
+                    account: 0,
+                    succeed: true,
+                    post: logInitialize,
+                    on_error: "Failed to initialize proxy"
+                },
                 {
                     block: counter.increment(),
                     action: "balanceOf",

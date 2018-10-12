@@ -4,6 +4,10 @@ var counter = require('../blockCounter.js');
 
 contract('Upgradable ERC20 - ownership read and transfer', function (accounts) {
     it("Ownership read and transfer Test", function (done) {
+        var logInitialize = function () {
+            console.log("    [Log]Attempt to initialize proxy");
+        }
+
         var logTransferOwner = function (action) {
             console.log("    [Log]Attempt to transfer ownership from account " +
                 action.account + " to account " + action.to + " through account " + action.account + ", Expected " + action.succeed);
@@ -18,6 +22,14 @@ contract('Upgradable ERC20 - ownership read and transfer', function (accounts) {
         run(accounts, done, {
             type: "erc",
             actions: [
+                {
+                    block: counter.increment(),
+                    action: "initialize",
+                    account: 0,
+                    succeed: true,
+                    post: logInitialize,
+                    on_error: "Failed to initialize proxy"
+                },
                 {
                     block: counter.increment(),
                     action: "owner",

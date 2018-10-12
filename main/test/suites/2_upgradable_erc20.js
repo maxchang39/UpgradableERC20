@@ -4,6 +4,10 @@ var counter = require('../blockCounter.js');
 
 contract('Upgradable ERC20 - read balance and totalSupply', function (accounts) {
     it("Read balance and totalSupply Test", function (done) {
+        var logInitialize = function () {
+            console.log("    [Log]Attempt to initialize proxy");
+        }
+
         var printAccount = function (action, result, expected) {
             var line = "    The balance of account " + action.owner + " is " + result.toString();
             if(expected != null)
@@ -23,6 +27,14 @@ contract('Upgradable ERC20 - read balance and totalSupply', function (accounts) 
         run(accounts, done, {
             type: "erc",
             actions: [
+                {
+                    block: counter.increment(),
+                    action: "initialize",
+                    account: 0,
+                    succeed: true,
+                    post: logInitialize,
+                    on_error: "Failed to initialize proxy"
+                },
                 {
                     block: counter.increment(),
                     action: "balanceOf",
