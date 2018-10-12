@@ -1,11 +1,11 @@
 pragma solidity ^0.4.24;
 
 import "./Storage.sol";
-import "./UpgradableERC20.sol";
+import "./ERC20Interface.sol";
 import "./TestTokenProxy.sol";
 import "./lib/math/SafeMath.sol";
 
-contract TestToken is UpgradableERC20, Storage {
+contract TestToken is ERC20Interface, Storage {
     using SafeMath for uint256;
 
     // Constructor

@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
 
-interface UpgradableERC20 {
+interface ERC20Interface {
     // Get the total token supply
     function totalSupply() external view returns (uint256);
 

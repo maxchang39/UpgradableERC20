@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
 
-import "./UpgradableERC20.sol";
+import "./ERC20Interface.sol";
 import "./lib/math/SafeMath.sol";
 import "./TestToken.sol";
 
