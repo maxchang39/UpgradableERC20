@@ -13,11 +13,11 @@ contract TestToken is ERC20Interface, Storage {
     }
 
     function initialize() public returns (bool success){
-        owner = tx.origin;
+        require(owner == address(0));
+
+        owner = msg.sender;
         _totalSupply = 10000;
         balances[owner] = _totalSupply;
-//        _storage.setUint("totalSupply", 10000);
-//        balances[msg.sender] = _storage.getUint("totalSupply");
 
         return true;
     }
