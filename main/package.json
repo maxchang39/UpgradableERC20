@@ -1,5 +1,5 @@
 {
-  "name": "upgradable_erc",
+  "name": "erc20",
   "version": "1.0.0",
   "main": "truffle.js",
   "directories": {

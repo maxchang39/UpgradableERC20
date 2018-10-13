@@ -4,13 +4,13 @@ var counter = require('../blockCounter.js');
 
 contract('Upgradable ERC20 - ownership read and transfer', function (accounts) {
     it("Ownership read and transfer Test", function (done) {
-        var logInitialize = function () {
-            console.log("    [Log]Attempt to initialize proxy");
+        var logInitialize = function (action) {
+            console.log("    [Log]Attempt to initialize proxy, Expected " + action.succeed);
         }
 
         var logTransferOwner = function (action) {
             console.log("    [Log]Attempt to transfer ownership from account " +
-                action.account + " to account " + action.to + " through account " + action.account + ", Expected " + action.succeed);
+                accounts.indexOf(action.account) + " to account " + accounts.indexOf(action.to) + ", Expected " + action.succeed);
         }
 
         var printOwner = function (action, result) {
@@ -25,7 +25,7 @@ contract('Upgradable ERC20 - ownership read and transfer', function (accounts) {
                 {
                     block: counter.increment(),
                     action: "initialize",
-                    account: 0,
+                    account: accounts[0],
                     succeed: true,
                     post: logInitialize,
                     on_error: "Failed to initialize proxy"
@@ -33,6 +33,7 @@ contract('Upgradable ERC20 - ownership read and transfer', function (accounts) {
                 {
                     block: counter.increment(),
                     action: "owner",
+                    account: accounts[0],
                     succeed: true,
                     post: printOwner,
                     result: accounts[0],
@@ -41,8 +42,8 @@ contract('Upgradable ERC20 - ownership read and transfer', function (accounts) {
                 {
                     block: counter.increment(),
                     action: "transferOwner",
-                    account: 1,
-                    to: 1,
+                    account: accounts[1],
+                    to: accounts[1],
                     log: logTransferOwner,
                     succeed: false,
                     result: accounts[0],
@@ -51,6 +52,7 @@ contract('Upgradable ERC20 - ownership read and transfer', function (accounts) {
                 {
                     block: counter.increment(),
                     action: "owner",
+                    account: accounts[0],
                     succeed: true,
                     post: printOwner,
                     result: accounts[0],
@@ -59,8 +61,8 @@ contract('Upgradable ERC20 - ownership read and transfer', function (accounts) {
                 {
                     block: counter.increment(),
                     action: "transferOwner",
-                    account: 0,
-                    to: 1,
+                    account: accounts[0],
+                    to: accounts[1],
                     log: logTransferOwner,
                     succeed: true,
                     on_error: "Failed to transfer the ownership to a different account"
@@ -68,6 +70,7 @@ contract('Upgradable ERC20 - ownership read and transfer', function (accounts) {
                 {
                     block: counter.increment(),
                     action: "owner",
+                    account: accounts[0],
                     succeed: true,
                     post: printOwner,
                     result: accounts[1],

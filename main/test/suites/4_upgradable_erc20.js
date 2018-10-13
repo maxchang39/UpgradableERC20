@@ -4,12 +4,13 @@ var counter = require('../blockCounter.js');
 
 contract('Upgradable ERC20 - approve accounts to transfer balance on be half of the owner', function (accounts) {
     it("Approve accounts to transfer balance on be half of the owner Test", function (done) {
-        var logInitialize = function () {
-            console.log("    [Log]Attempt to initialize proxy");
+        var logInitialize = function (action) {
+            console.log("    [Log]Attempt to initialize proxy, Expected " + action.succeed);
         }
 
         var printAllowance = function (action, result, expected) {
-            var line = "    The allowance of account " + action.spender + " on behalf of account " + action.owner +" is " + result.toString();
+            var line = "    The allowance of account " + accounts.indexOf(action.spender) +
+                " on behalf of account " + accounts.indexOf(action.owner) + " is " + result.toString();
             if (expected != null)
                 line += ", expected " + expected;
             console.log(line);
@@ -23,7 +24,7 @@ contract('Upgradable ERC20 - approve accounts to transfer balance on be half of 
                 {
                     block: counter.increment(),
                     action: "initialize",
-                    account: 0,
+                    account: accounts[0],
                     succeed: true,
                     post: logInitialize,
                     on_error: "Failed to initialize proxy"
@@ -31,9 +32,9 @@ contract('Upgradable ERC20 - approve accounts to transfer balance on be half of 
                 {
                     block: counter.increment(),
                     action: "allowance",
-                    account: 0,
-                    owner: 0,
-                    spender: 1,
+                    account: accounts[0],
+                    owner: accounts[0],
+                    spender: accounts[1],
                     succeed: true,
                     result: 0,
                     post: printAllowance,
@@ -42,8 +43,8 @@ contract('Upgradable ERC20 - approve accounts to transfer balance on be half of 
                 {
                     block: counter.increment(),
                     action: "approve",
-                    account: 0,
-                    spender: 1,
+                    account: accounts[0],
+                    spender: accounts[1],
                     amount: 200,
                     succeed: true,
                     on_error: "Failed to approve account 1 to spend on behalf of account 0"
@@ -51,9 +52,9 @@ contract('Upgradable ERC20 - approve accounts to transfer balance on be half of 
                 {
                     block: counter.increment(),
                     action: "allowance",
-                    account: 0,
-                    owner: 0,
-                    spender: 1,
+                    account: accounts[0],
+                    owner: accounts[0],
+                    spender: accounts[1],
                     succeed: true,
                     result: 200,
                     post: printAllowance,

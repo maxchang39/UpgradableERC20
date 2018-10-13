@@ -4,17 +4,17 @@ var counter = require('../blockCounter.js');
 
 contract('Upgradable ERC20 - transfer balance', function (accounts) {
     it("Transfer balance Test", function (done) {
-        var logInitialize = function () {
-            console.log("    [Log]Attempt to initialize proxy");
+        var logInitialize = function (action) {
+            console.log("    [Log]Attempt to initialize proxy, Expected " + action.succeed);
         }
 
         var logTransfer = function (action) {
             console.log("    [Log]Attempt to transfer " + action.amount + " from account " +
-                action.account + " to account " + action.to + ", Expected " + action.succeed);
+                accounts.indexOf(action.account) + " to account " + accounts.indexOf(action.to) + ", Expected " + action.succeed);
         }
 
         var printAccount = function (action, result, expected) {
-            var line = "    The balance of account " + action.owner + " is " + result.toString();
+            var line = "    The balance of account " + accounts.indexOf(action.owner) + " is " + result.toString();
             if (expected != null)
                 line += ", expected " + expected;
             console.log(line);
@@ -28,7 +28,7 @@ contract('Upgradable ERC20 - transfer balance', function (accounts) {
                 {
                     block: counter.increment(),
                     action: "initialize",
-                    account: 0,
+                    account: accounts[0],
                     succeed: true,
                     post: logInitialize,
                     on_error: "Failed to initialize proxy"
@@ -36,7 +36,8 @@ contract('Upgradable ERC20 - transfer balance', function (accounts) {
                 {
                     block: counter.increment(),
                     action: "balanceOf",
-                    owner: 0,
+                    owner: accounts[0],
+                    account: accounts[0],
                     succeed: true,
                     result: 10000,
                     post: printAccount,
@@ -45,7 +46,8 @@ contract('Upgradable ERC20 - transfer balance', function (accounts) {
                 {
                     block: counter.increment(),
                     action: "balanceOf",
-                    owner: 1,
+                    owner: accounts[1],
+                    account: accounts[0],
                     succeed: true,
                     result: 0,
                     post: printAccount,
@@ -54,8 +56,8 @@ contract('Upgradable ERC20 - transfer balance', function (accounts) {
                 {
                     block: counter.increment(),
                     action: "transfer",
-                    account: 1,
-                    to: 2,
+                    account: accounts[1],
+                    to: accounts[2],
                     amount: 450,
                     log: logTransfer,
                     succeed: false,
@@ -64,8 +66,18 @@ contract('Upgradable ERC20 - transfer balance', function (accounts) {
                 {
                     block: counter.increment(),
                     action: "transfer",
-                    account: 0,
-                    to: 1,
+                    account: accounts[1],
+                    to: 0,
+                    amount: 450,
+                    log: logTransfer,
+                    succeed: false,
+                    on_error: "transfer balance from account 1 to address 0x0 should fail"
+                },
+                {
+                    block: counter.increment(),
+                    action: "transfer",
+                    account: accounts[0],
+                    to: accounts[1],
                     amount: 450,
                     log: logTransfer,
                     succeed: true,
@@ -74,7 +86,8 @@ contract('Upgradable ERC20 - transfer balance', function (accounts) {
                 {
                     block: counter.increment(),
                     action: "balanceOf",
-                    owner: 0,
+                    owner: accounts[0],
+                    account: accounts[0],
                     succeed: true,
                     result: 9550,
                     post: printAccount,
@@ -83,7 +96,8 @@ contract('Upgradable ERC20 - transfer balance', function (accounts) {
                 {
                     block: counter.increment(),
                     action: "balanceOf",
-                    owner: 1,
+                    owner: accounts[1],
+                    account: accounts[0],
                     succeed: true,
                     result: 450,
                     post: printAccount,
@@ -92,7 +106,8 @@ contract('Upgradable ERC20 - transfer balance', function (accounts) {
                 {
                     block: counter.increment(),
                     action: "balanceOf",
-                    owner: 2,
+                    owner: accounts[2],
+                    account: accounts[0],
                     succeed: true,
                     result: 0,
                     post: printAccount,

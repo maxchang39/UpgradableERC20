@@ -3,7 +3,7 @@ Vagrant.configure(2) do |config|
   config.vm.provision :shell, path: "vagrant/bootstrap.sh"
   config.vm.provider "virtualbox" do |v|
     v.memory = 4096
-  end  
-  config.vm.synced_folder ".", "/home/vagrant/homework1"
+  end
+  config.vm.synced_folder ".", "/home/vagrant/UpgradableERC20"
   config.vm.network "private_network", type: "dhcp"
 end

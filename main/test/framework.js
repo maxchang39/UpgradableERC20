@@ -34,7 +34,6 @@ module.exports = function (accounts, done, schema) {
 
                         //console.log(schema.action);
                         var actions = schema.actions;
-                        var nonces = [];
 
                         function error(message) {
                             done(Error("Test: " + message));
@@ -44,16 +43,8 @@ module.exports = function (accounts, done, schema) {
                             done(Error("Action " + action + ": " + message));
                         }
 
-                        function print(accounts, c) {
-                            for (i = 0; i < c; i++) {
-                                //console.log("accounts[" + i + "]: " + accounts[i] + " " + web3.eth.getBalance(accounts[i]));
-                            }
-                        }
-
                         // Internal run actions function.
                         function run_() {
-                            //console.log("web3.eth.blockNumber: " + web3.eth.blockNumber + " block=" + block + " index=" + index);
-                            // If we've run out of actions, the test has passed.
                             if (actionNumber >= actions.length) {
                                 done();
                                 return;
@@ -110,7 +101,6 @@ module.exports = function (accounts, done, schema) {
 
                                 run_();
                             }).catch(function (error) {
-                                print(accounts, 3);
                                 if (action.succeed) {
                                     return fail(actionNumber, action.on_error + ": " + error.toString().replace(/^error: /i, ""));
                                 }
@@ -136,17 +126,23 @@ module.exports = function (accounts, done, schema) {
 }
 
 function performAction(action, instance, accounts, gasPrice, gasAllocated, implementations) {
-    var account = accounts[action.account];
-
     // suppose no signature change, use the i1 signature
     var implementation = UpgradableERC20.at(instance.address);
+
+    if(action.version != null){
+        if(action.implementation == null) {
+            var impl = implementations[action.version - 1].address;
+        } else {
+            var impl = action.implementation;
+        }
+    }
 
     switch (action.action) {
         case "upgradeTo":
             return instance.upgradeTo(
-                implementations[action.version-1].address,
+                impl,
                 {
-                    from: account,
+                    from: action.account,
                     to: instance.address,
                     gasPrice: gasPrice,
                     gas: gasAllocated
@@ -155,7 +151,7 @@ function performAction(action, instance, accounts, gasPrice, gasAllocated, imple
         case "initialize":
             return implementation.initialize(
                 {
-                    from: account,
+                    from: action.account,
                     to: instance.address,
                     gasPrice: gasPrice,
                     gas: gasAllocated
@@ -164,7 +160,7 @@ function performAction(action, instance, accounts, gasPrice, gasAllocated, imple
         case "totalSupply":
             return implementation.totalSupply(
                 {
-                    from: account,
+                    from: action.account,
                     to: instance.address,
                     gasPrice: gasPrice,
                     gas: gasAllocated
@@ -172,9 +168,9 @@ function performAction(action, instance, accounts, gasPrice, gasAllocated, imple
             break;
         case "balanceOf":
             return implementation.balanceOf(
-                accounts[action.owner],
+                action.owner,
                 {
-                    from: account,
+                    from: action.account,
                     to: instance.address,
                     gasPrice: gasPrice,
                     gas: gasAllocated
@@ -182,10 +178,10 @@ function performAction(action, instance, accounts, gasPrice, gasAllocated, imple
             break;
         case "transfer":
             return implementation.transfer(
-                accounts[action.to],
+                action.to,
                 action.amount,
                 {
-                    from: account,
+                    from: action.account,
                     to: instance.address,
                     gasPrice: gasPrice,
                     gas: gasAllocated
@@ -193,11 +189,11 @@ function performAction(action, instance, accounts, gasPrice, gasAllocated, imple
             break;
         case "transferFrom":
             return implementation.transferFrom(
-                accounts[action.from],
-                accounts[action.to],
+                action.from,
+                action.to,
                 action.amount,
                 {
-                    from: account,
+                    from: action.account,
                     to: instance.address,
                     gasPrice: gasPrice,
                     gas: gasAllocated
@@ -205,9 +201,9 @@ function performAction(action, instance, accounts, gasPrice, gasAllocated, imple
             break;
         case "transferOwner":
             return implementation.transferOwner(
-                accounts[action.to],
+                action.to,
                 {
-                    from: account,
+                    from: action.account,
                     to: instance.address,
                     gasPrice: gasPrice,
                     gas: gasAllocated
@@ -215,11 +211,11 @@ function performAction(action, instance, accounts, gasPrice, gasAllocated, imple
             break;
         case "allowance" :
             return implementation.allowance(
-                accounts[action.owner],
-                accounts[action.spender],
+                action.owner,
+                action.spender,
                 action.amount,
                 {
-                    from: account,
+                    from: action.account,
                     to: instance.address,
                     gasPrice: gasPrice,
                     gas: gasAllocated
@@ -227,11 +223,10 @@ function performAction(action, instance, accounts, gasPrice, gasAllocated, imple
             break;
         case "approve" :
             return implementation.approve(
-                accounts[action.spender],
-                accounts[action.amount],
+                action.spender,
                 action.amount,
                 {
-                    from: account,
+                    from: action.account,
                     to: instance.address,
                     gasPrice: gasPrice,
                     gas: gasAllocated
@@ -240,7 +235,7 @@ function performAction(action, instance, accounts, gasPrice, gasAllocated, imple
         case "owner" :
             return implementation.owner(
                 {
-                    from: account,
+                    from: action.account,
                     to: instance.address,
                     gasPrice: gasPrice,
                     gas: gasAllocated
@@ -249,7 +244,7 @@ function performAction(action, instance, accounts, gasPrice, gasAllocated, imple
         case "freeze" :
             return implementation.freeze(
                 {
-                    from: account,
+                    from: action.account,
                     to: instance.address,
                     gasPrice: gasPrice,
                     gas: gasAllocated
@@ -258,7 +253,7 @@ function performAction(action, instance, accounts, gasPrice, gasAllocated, imple
         case "unfreeze" :
             return implementation.unfreeze(
                 {
-                    from: account,
+                    from: action.account,
                     to: instance.address,
                     gasPrice: gasPrice,
                     gas: gasAllocated
@@ -266,9 +261,9 @@ function performAction(action, instance, accounts, gasPrice, gasAllocated, imple
             break;
         case "blacklist":
             return implementation.blacklist(
-                accounts[action.user],
+                action.user,
                 {
-                    from: account,
+                    from: action.account,
                     to: instance.address,
                     gasPrice: gasPrice,
                     gas: gasAllocated

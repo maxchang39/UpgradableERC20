@@ -3,7 +3,7 @@ pragma solidity ^0.4.24;
 import "./Storage.sol";
 import "./ERC20Interface.sol";
 import "./TestTokenProxy.sol";
-import "./lib/math/SafeMath.sol";
+import "../lib/SafeMath.sol";
 
 contract TestToken is ERC20Interface, Storage {
     using SafeMath for uint256;
@@ -80,7 +80,7 @@ contract TestToken is ERC20Interface, Storage {
     function approve(address _spender, uint256 _amount) public returns (bool success) {
         require(!_blacklist[_spender] && !_blacklist[msg.sender]);
 
-        allowed[msg.sender][_spender] = _amount;
+        allowed[msg.sender][_spender] = allowed[msg.sender][_spender].add(_amount);
 
         emit Approval(msg.sender, _spender, _amount);
 

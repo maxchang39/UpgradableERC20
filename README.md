@@ -36,7 +36,7 @@ First cmd prompt
 Second cmd prompt
 * vagrant up
 * vagrant ssh
-* cd homework1/main/
+* cd erc20/main/
 * truffle test
 
 # Test Coverage
