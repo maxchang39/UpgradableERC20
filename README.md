@@ -42,3 +42,6 @@ Second cmd prompt
 
 # Test Coverage
 100% branch, 100% line
+
+# Deployment
+Please follow web3 documentation at: https://web3js.readthedocs.io/en/1.0/web3-eth-contract.html#deploy
