@@ -36,9 +36,9 @@ First cmd prompt
 Second cmd prompt
 * vagrant up
 * vagrant ssh
-* cd erc20/main/
-* truffle test
+* npm install --save-dev solidity-coverage
+* cd UpgradableERC20/main/
+* ../../node_modules/.bin/solidity-coverage
 
 # Test Coverage
-
-# Deployment
+100% branch, 100% line
