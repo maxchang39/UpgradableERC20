@@ -30,6 +30,7 @@ contract('Upgradable ERC20 - read balance and totalSupply', function (accounts) 
                 {
                     block: counter.increment(),
                     action: "initialize",
+                    totalSupply: 10000,
                     account: accounts[0],
                     succeed: true,
                     post: logInitialize,

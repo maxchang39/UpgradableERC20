@@ -106,7 +106,7 @@ module.exports = function (accounts, done, schema) {
                                 }
 
                                 if (action.post) {
-                                    action.post(error);
+                                    action.post(action);
                                 }
 
                                 run_();
@@ -150,6 +150,7 @@ function performAction(action, instance, accounts, gasPrice, gasAllocated, imple
             break;
         case "initialize":
             return implementation.initialize(
+                action.totalSupply,
                 {
                     from: action.account,
                     to: instance.address,

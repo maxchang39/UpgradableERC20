@@ -50,6 +50,7 @@ contract('Upgradable ERC20 - blacklist users', function (accounts) {
                 {
                     block: counter.increment(),
                     action: "initialize",
+                    totalSupply: 10000,
                     account: accounts[0],
                     succeed: true,
                     post: logInitialize,

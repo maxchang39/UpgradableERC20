@@ -3,12 +3,6 @@ pragma solidity ^0.4.24;
 import "./Storage.sol";
 
 contract TestTokenProxy is Storage {
-    // Owner of this contract
-    address public admin;
-
-    // The actual implementation address
-    address private impl;
-
     constructor(address _impl) public {
         impl = _impl;
         admin = msg.sender;

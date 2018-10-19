@@ -25,6 +25,7 @@ contract('Upgradable ERC20 - ownership read and transfer', function (accounts) {
                 {
                     block: counter.increment(),
                     action: "initialize",
+                    totalSupply: 10000,
                     account: accounts[0],
                     succeed: true,
                     post: logInitialize,

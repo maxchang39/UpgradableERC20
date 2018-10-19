@@ -37,6 +37,7 @@ contract('Upgradable ERC20 - transfer balance on be half of the owner', function
                 {
                     block: counter.increment(),
                     action: "initialize",
+                    totalSupply: 10000,
                     account: accounts[0],
                     succeed: true,
                     post: logInitialize,

@@ -2,21 +2,38 @@ pragma solidity ^0.4.24;
 
 import "./Storage.sol";
 import "./ERC20Interface.sol";
-import "./TestTokenProxy.sol";
 import "../lib/SafeMath.sol";
 
 contract TestToken is ERC20Interface, Storage {
     using SafeMath for uint256;
 
+    // Total amount of tokens
+    uint256 public _totalSupply;
+
+    // Flag for whether contract is locked
+    bool public _freeze;
+
+    // Owner of this contract
+    address public owner;
+
+    // List of blocked users
+    mapping(address => bool) _blacklist;
+
+    // Balances of accounts
+    mapping(address => uint256) balances;
+
+    // Amount allowed to transfer on behalf the owner
+    mapping(address => mapping(address => uint256)) allowed;
+
     // Constructor
     constructor() public {
     }
 
-    function initialize() public returns (bool success){
+    function initialize(uint256 totalSupply_) public returns (bool success){
         require(owner == address(0));
 
         owner = msg.sender;
-        _totalSupply = 10000;
+        _totalSupply = totalSupply_;
         balances[owner] = _totalSupply;
 
         return true;
@@ -42,6 +59,8 @@ contract TestToken is ERC20Interface, Storage {
         balances[msg.sender] = balances[msg.sender].sub(_amount);
         balances[_to] = balances[_to].add(_amount);
 
+        emit Transfer(msg.sender, _to, _amount);
+
         return true;
     }
 
@@ -63,6 +82,8 @@ contract TestToken is ERC20Interface, Storage {
         balances[_from] = balances[_from].sub(_amount);
         balances[_to] = balances[_to].add(_amount);
 
+        emit Transfer(_from, _to, _amount);
+
         return true;
     }
 
@@ -80,7 +101,7 @@ contract TestToken is ERC20Interface, Storage {
     function approve(address _spender, uint256 _amount) public returns (bool success) {
         require(!_blacklist[_spender] && !_blacklist[msg.sender]);
 
-        allowed[msg.sender][_spender] = allowed[msg.sender][_spender].add(_amount);
+        allowed[msg.sender][_spender] = _amount;
 
         emit Approval(msg.sender, _spender, _amount);
 

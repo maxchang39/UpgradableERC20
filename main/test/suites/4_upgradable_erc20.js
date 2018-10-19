@@ -24,6 +24,7 @@ contract('Upgradable ERC20 - approve accounts to transfer balance on be half of 
                 {
                     block: counter.increment(),
                     action: "initialize",
+                    totalSupply: 10000,
                     account: accounts[0],
                     succeed: true,
                     post: logInitialize,
